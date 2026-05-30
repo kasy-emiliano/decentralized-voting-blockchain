@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
-    /* ── Reset & Variables ── */
+ 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -34,7 +34,7 @@
       line-height: 1.6;
     }
 
-    /* ── Fond animé ── */
+ 
     body::before {
       content: '';
       position: fixed;
@@ -46,10 +46,10 @@
       z-index: 0;
     }
 
-    /* ── Layout ── */
+ 
     .page { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
 
-    /* ── Header ── */
+ 
     header {
       display: flex;
       align-items: center;
@@ -95,7 +95,7 @@
       display: none;
     }
 
-    /* ── Boutons ── */
+ 
     .btn {
       font-family: var(--sans);
       font-weight: 500;
@@ -158,7 +158,6 @@
       cursor: default;
     }
 
-    /* ── Spinner ── */
     .btn-spinner {
       width: 12px; height: 12px;
       border: 2px solid rgba(255,255,255,0.3);
@@ -170,7 +169,7 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Section titre ── */
+ 
     .section-header {
       display: flex;
       align-items: baseline;
@@ -196,7 +195,7 @@
     }
     .refresh-btn:hover { color: var(--accent2); }
 
-    /* ── Cartes proposition ── */
+ 
     .proposals-grid {
       display: flex;
       flex-direction: column;
@@ -273,7 +272,6 @@
 
     .card-footer { display: flex; justify-content: flex-end; }
 
-    /* ── Panneau création (admin) ── */
     .admin-panel {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -327,7 +325,7 @@
     input:focus, textarea:focus { border-color: var(--accent); }
     textarea { resize: vertical; min-height: 80px; }
 
-    /* ── États vides / loading ── */
+ 
     #loading-spinner {
       display: none;
       justify-content: center;
@@ -354,7 +352,7 @@
     .empty-icon { font-size: 2rem; margin-bottom: 12px; }
     .empty-text { font-size: 0.875rem; }
 
-    /* ── Toast ── */
+ 
     .toast {
       position: fixed;
       bottom: 24px;
@@ -375,7 +373,6 @@
     .toast-error   { background: rgba(239,68,68,0.15);   border: 1px solid rgba(239,68,68,0.3);   color: var(--red);   }
     .toast-info    { background: rgba(59,130,246,0.15);  border: 1px solid rgba(59,130,246,0.3);  color: var(--accent2); }
 
-    /* ── Réseau badge ── */
     .network-badge {
       font-family: var(--mono);
       font-size: 0.68rem;
@@ -386,7 +383,6 @@
       color: var(--amber);
     }
 
-    /* ── Responsive ── */
     @media (max-width: 600px) {
       header { flex-direction: column; align-items: flex-start; gap: 16px; }
       .card-meta { flex-direction: column; align-items: flex-start; gap: 8px; }
@@ -396,7 +392,7 @@
 <body>
   <div class="page">
 
-    <!-- HEADER -->
+ 
     <header>
       <div class="logo">
         <span class="logo-dot"></span>
@@ -411,7 +407,7 @@
       </div>
     </header>
 
-    <!-- PANNEAU ADMIN (création de proposition) -->
+ 
     <div class="admin-panel">
       <div class="admin-title">Créer une proposition — Owner uniquement</div>
       <div class="form-group">
@@ -430,7 +426,7 @@
       </button>
     </div>
 
-    <!-- LISTE DES PROPOSITIONS -->
+ 
     <div class="section-header">
       <span class="section-title">Propositions en cours</span>
       <button class="refresh-btn" onclick="loadProposals()">↻ Actualiser</button>
@@ -450,12 +446,12 @@
 
   </div>
 
-  <!-- TOAST -->
+ 
   <div class="toast" id="toast"></div>
 
-  <!-- ethers.js v6 CDN -->
+ 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
-  <!-- Logique app -->
+ 
   <script src="app.js"></script>
 </body>
 </html>

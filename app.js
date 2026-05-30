@@ -1,36 +1,24 @@
  
-
-// --- CONFIGURATION ---
-// À mettre à jour quand le Membre 1 déploie le contrat
-const CONTRACT_ADDRESS = "0xYOUR_CONTRACT_ADDRESS_HERE";
-const SEPOLIA_CHAIN_ID = "0xaa36a7"; // 11155111 en hex
-
-// ABI minimal — couvre les fonctions attendues du contrat Solidity
-// À ajuster si le Membre 1 change les noms de fonctions
+ 
+const CONTRACT_ADDRESS = "CONTRACT_ADDRESS";
+const SEPOLIA_CHAIN_ID = "0xaa36a7";
+ 
 const ABI = [
-  // Lecture
   "function getProposalsCount() view returns (uint256)",
   "function getProposal(uint256 id) view returns (string description, uint256 voteCount, uint256 deadline, bool closed)",
   "function hasVoted(address voter, uint256 proposalId) view returns (bool)",
 
-  // Écriture
   "function vote(uint256 proposalId) external",
   "function createProposal(string calldata description, uint256 deadline) external",
 
-  // Events
   "event Voted(address indexed voter, uint256 indexed proposalId)",
   "event ProposalCreated(uint256 indexed id, string description, uint256 deadline)",
 ];
 
-// --- ÉTAT GLOBAL ---
 let provider = null;
 let signer = null;
 let contract = null;
 let userAddress = null;
-
-// ============================================================
-//  CONNEXION METAMASK
-// ============================================================
 
 async function connectWallet() {
   if (!window.ethereum) {
@@ -40,34 +28,27 @@ async function connectWallet() {
 
   try {
     setWalletButtonState("loading");
-
-    // Demander accès au wallet
     const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
     userAddress = accounts[0];
 
-    // Vérifier le réseau
     const chainId = await window.ethereum.request({ method: "eth_chainId" });
     if (chainId !== SEPOLIA_CHAIN_ID) {
       await switchToSepolia();
     }
 
-    // Initialiser ethers
     provider = new ethers.BrowserProvider(window.ethereum);
     signer = await provider.getSigner();
     contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
 
-    // Mettre à jour l'UI
+    updateWalletUI(userAddress);
     updateWalletUI(userAddress);
     setWalletButtonState("connected");
     showToast("Wallet connecté avec succès !", "success");
-
-    // Charger les propositions
+ 
     await loadProposals();
-
-    // Écouter les événements du contrat
+ 
     listenToContractEvents();
 
-    // Écouter les changements de compte / réseau
     window.ethereum.on("accountsChanged", handleAccountChange);
     window.ethereum.on("chainChanged", () => window.location.reload());
 
@@ -84,7 +65,6 @@ async function switchToSepolia() {
       params: [{ chainId: SEPOLIA_CHAIN_ID }],
     });
   } catch (switchError) {
-    // Le réseau n'existe pas encore dans MetaMask, on l'ajoute
     if (switchError.code === 4902) {
       await window.ethereum.request({
         method: "wallet_addEthereumChain",
@@ -104,7 +84,6 @@ async function switchToSepolia() {
 
 function handleAccountChange(accounts) {
   if (accounts.length === 0) {
-    // Déconnexion
     userAddress = null;
     contract = null;
     signer = null;
@@ -117,10 +96,7 @@ function handleAccountChange(accounts) {
   }
 }
 
-// ============================================================
-//  CHARGEMENT DES PROPOSITIONS
-// ============================================================
-
+ 
 async function loadProposals() {
   if (!contract) return;
 
@@ -140,8 +116,7 @@ async function loadProposals() {
     }
 
     emptyState.style.display = "none";
-
-    // Charger toutes les propositions en parallèle
+ 
     const promises = [];
     for (let i = 0; i < total; i++) {
       promises.push(loadSingleProposal(i));
@@ -172,10 +147,7 @@ async function loadSingleProposal(id) {
   }
 }
 
-// ============================================================
-//  VOTE
-// ============================================================
-
+ 
 async function castVote(proposalId, button) {
   if (!contract || !userAddress) {
     showToast("Connecte ton wallet d'abord.", "error");
@@ -186,19 +158,16 @@ async function castVote(proposalId, button) {
     button.disabled = true;
     button.innerHTML = `<span class="btn-spinner"></span>En attente…`;
 
-    // Envoyer la transaction
     const tx = await contract.vote(proposalId);
     button.innerHTML = `<span class="btn-spinner"></span>Confirmation…`;
     showToast("Transaction envoyée, attente de confirmation…", "info");
 
-    // Attendre 1 confirmation
     await tx.wait(1);
 
     button.innerHTML = `✓ Voté`;
     button.classList.add("voted");
     showToast("Vote enregistré sur la blockchain !", "success");
 
-    // Rafraîchir le compteur de cette proposition
     await refreshProposalCount(proposalId);
 
   } catch (err) {
@@ -220,9 +189,6 @@ async function refreshProposalCount(id) {
   } catch {}
 }
 
-// ============================================================
-//  CRÉER UNE PROPOSITION (owner seulement)
-// ============================================================
 
 async function createProposal() {
   const description = document.getElementById("proposal-description").value.trim();
@@ -265,10 +231,7 @@ async function createProposal() {
   }
 }
 
-// ============================================================
-//  EVENTS EN TEMPS RÉEL
-// ============================================================
-
+ 
 function listenToContractEvents() {
   if (!contract) return;
 
@@ -285,10 +248,7 @@ function listenToContractEvents() {
   });
 }
 
-// ============================================================
-//  CONSTRUCTION DES CARTES UI
-// ============================================================
-
+ 
 function buildProposalCard(id, description, voteCount, deadlineTs, isOpen, voted) {
   const card = document.createElement("div");
   card.className = `proposal-card ${isOpen ? "open" : "closed"}`;
@@ -335,11 +295,7 @@ function buildVoteButton(id, isOpen, voted) {
   }
   return `<button class="btn-vote" onclick="castVote(${id}, this)">Voter</button>`;
 }
-
-// ============================================================
-//  UTILITAIRES UI
-// ============================================================
-
+ 
 function updateWalletUI(address) {
   const walletInfo = document.getElementById("wallet-info");
   const connectBtn = document.getElementById("connect-btn");
