@@ -179,3 +179,17 @@
 ### Difficult parts
 - Proposal creation must happen from the owner account, so the script relies on the same deployer-controlled environment used for Sepolia deployment.
 - Seeding a live contract is not naturally reversible, so the script aborts when proposal count is already non-zero.
+
+## Modification 11 - Member 2 ABI and Contract Config Handoff
+
+### What was changed
+- Added `front/contractConfig.js` with the live Sepolia contract address
+- Exported the Sepolia chain metadata needed for MetaMask network checks
+- Included the contract ABI in a browser-friendly and Node-friendly format
+
+### Why this helps
+- Member 2 now has a single importable source for contract address, ABI, and network identification.
+- It removes the need for Member 2 to read Hardhat artifacts directly or copy ABI fragments by hand.
+
+### Difficult parts
+- The handoff file needs to work in both plain browser usage and script-based tooling, so it exposes the config through `window` and `module.exports`.
